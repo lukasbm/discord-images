@@ -1,5 +1,5 @@
-import { Discord, On, Client } from "@typeit/discord";
-import { Message } from "discord.js";
+import { Discord, On, Client, ArgsOf } from "@typeit/discord";
+import { analyzeImage } from "./analyze";
 
 @Discord()
 export class Bot {
@@ -9,15 +9,18 @@ export class Bot {
     console.log("start");
 
     this._client = new Client();
-    this._client.login(
-      process.env.DISCORD_TOKEN,
-      `${__dirname}/*Discord.ts` // glob string to load the classes
-    );
     this._client.login(process.env.DISCORD_TOKEN);
   }
 
-  // @On("message")
-  // async onMessage(message: Message, client: Client) {
-  //   console.log(message);
-  // }
+  @On("message")
+  public onMessage([message]: ArgsOf<"message">) {
+    let channel = message.channel;
+    let caption = message.content;
+    let authorId = message.author.id;
+    let attachments = message.attachments.map((val) => val.url);
+
+    for (let attachment of attachments) {
+      analyzeImage(attachment);
+    }
+  }
 }
