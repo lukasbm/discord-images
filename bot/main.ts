@@ -1,6 +1,6 @@
 // import { Client } from "@typeit/discord";
 
-async function start() {
+function start() {
   console.log("lets gooo");
 
   // const client = new Client({
