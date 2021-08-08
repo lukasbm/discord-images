@@ -2,10 +2,11 @@
   "name": "discord-images-bot",
   "version": "1.0.0",
   "description": "discord bot that analyzes images",
-  "main": "index.js",
+  "main": "build/main.js",
   "type": "module",
   "scripts": {
-    "start": "node -r dotenv/config index.js",
+    "build": "npx tsc",
+    "start": "npx tsc && node build/main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -24,7 +25,12 @@
   },
   "homepage": "https://github.com/lukasbm/discord-images#readme",
   "dependencies": {
+    "@typeit/discord": "^4.0.10",
     "clarifai-nodejs-grpc": "^7.4.0",
+    "discord.js": "^13.0.1",
     "dotenv": "^10.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^4.3.5"
   }
 }
