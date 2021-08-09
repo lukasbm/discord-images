@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { createConnection } from "typeorm";
-import { Image } from "./models";
+import { Image, Label } from "./models";
 
 createConnection({
   type: "postgres",
@@ -9,7 +9,7 @@ createConnection({
   username: process.env.DB_USER || "postgres",
   password: process.env.DB_PASSWORD || "postgres",
   database: process.env.DB_NAME || "postgres",
-  entities: [Image],
+  entities: [Image, Label],
   synchronize: true,
 })
   .then((connection) => {

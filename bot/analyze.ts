@@ -11,7 +11,7 @@ const clarifai = new V2Client(
 const metadata = new grpc.Metadata();
 metadata.set("authorization", `Key ${process.env.CLARIFAI_API_KEY}`);
 
-export function analyzeImage(url) {
+export function analyzeImage(url): Array<resources.Concept> {
   const request = new service.PostModelOutputsRequest();
   // This is the model ID of a publicly available General model. You may use any other public or custom model ID.
   request.setModelId("aaa03c23b3724a16a56b629203edc62c");
@@ -27,18 +27,12 @@ export function analyzeImage(url) {
     }
 
     if (response.getStatus().getCode() !== StatusCode.SUCCESS) {
-      throw "Error: " + response.getStatus();
+      throw "Clarifai Error: " + response.getStatus();
     }
 
-    console.log("Predicted concepts, with confidence values:");
-    // for (const c of response.outputs[0].data.concepts) {
-    //   console.log(c.name + ": " + c.value);
-    // }
-    for (const concept of response
-      .getOutputsList()[0]
-      .getData()
-      .getConceptsList()) {
-      console.log(concept.getName() + " " + concept.getValue());
-    }
+    return response.getOutputsList()[0].getData().getConceptsList();
   });
+
+  // FIXME always returns this one because the other one is a promise or so...
+  return null;
 }

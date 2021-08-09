@@ -1,7 +1,15 @@
-import { Entity, Column, PrimaryColumn } from "typeorm";
+import {
+  Entity,
+  Column,
+  PrimaryColumn,
+  BaseEntity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  OneToMany,
+} from "typeorm";
 
 @Entity()
-export class Image {
+export class Image extends BaseEntity {
   @PrimaryColumn()
   url: string;
 
@@ -11,7 +19,21 @@ export class Image {
   @Column()
   caption: string;
 
-  @Column()
-  channel: string;
+  @OneToMany(() => Label, (label) => label.id)
+  labels: Label[];
+}
 
+@Entity()
+export class Label extends BaseEntity {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  label: string;
+
+  @Column()
+  confidence: number;
+
+  @ManyToOne(() => Image, (image) => image.url)
+  image: Image;
 }
