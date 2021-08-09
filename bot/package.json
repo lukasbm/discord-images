@@ -4,8 +4,8 @@
   "description": "discord bot that analyzes images",
   "main": "build/main.js",
   "scripts": {
-    "build": "tsc",
-    "start": "tsc && node -r dotenv/config ./build/main.js",
+    "build": "npx tsc",
+    "start": "npx tsc && node -r dotenv/config ./build/main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
