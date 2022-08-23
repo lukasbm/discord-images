@@ -1,5 +1,5 @@
 {
-  "name": "3-blank",
+  "name": "bot",
   "version": "1.0.0",
   "private": true,
   "license": "MIT",
@@ -13,7 +13,6 @@
     "watch": "nodemon --exec ts-node-esm src/main.ts"
   },
   "dependencies": {
-    "@discordx/importer": "^1.1.10",
     "discord.js": "^14.2.0",
     "discordx": "^11.1.8",
     "reflect-metadata": "^0.1.13"
