@@ -9,4 +9,3 @@ Explore your discord images, categorized in an easy to use interface
 - AI Service that categorizes them
 - Backend that stores the results for each image
 - Web interface to easily find your discord images
-

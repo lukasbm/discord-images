@@ -1,0 +1,36 @@
+{
+  "name": "discord-images",
+  "version": "0.0.0",
+  "description": "Explore your discord images, categorized in an easy to use interface",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lukasbm/discord-images.git"
+  },
+  "keywords": [
+    "search",
+    "ui",
+    "discord",
+    "ai"
+  ],
+  "author": "lukasbm",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lukasbm/discord-images/issues"
+  },
+  "homepage": "https://github.com/lukasbm/discord-images#readme",
+  "workspaces": [
+    "analyze",
+    "bot",
+    "web"
+  ],
+  "scripts": {
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "prettier": "^2.7.1"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=7.0.0"
+  }
+}
