@@ -4,10 +4,23 @@ import { IntentsBitField } from "discord.js";
 import { ArgsOf, Client, Discord, On } from "discordx";
 
 @Discord()
-class MessageHandler {
+class BotAction {
   @On()
   messageCreate([message]: ArgsOf<"messageCreate">): void {
-    console.log(message.content);
+    let caption = message.content;
+    let authorId = message.author.id;
+    let attachments = message.attachments.map((val) => val.url);
+
+    console.log(`${authorId} - ${caption} : ${[attachments]}`);
+
+    for (let attachment of attachments) {
+      console.log(attachment);
+    }
+  }
+
+  @On()
+  ready(): void {
+    console.log("Bot started...");
   }
 }
 
@@ -18,10 +31,6 @@ export const bot = new Client({
     IntentsBitField.Flags.Guilds, // channels
     IntentsBitField.Flags.GuildMessages, // channel messages
   ],
-});
-
-bot.on("ready", () => {
-  console.log("Bot started...");
 });
 
 // Start the bot
