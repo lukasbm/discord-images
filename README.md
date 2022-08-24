@@ -9,3 +9,21 @@ Explore your discord images, categorized in an easy to use interface
 - AI Service that categorizes them
 - Backend that stores the results for each image
 - Web interface to easily find your discord images
+
+## Deployment
+
+### Bot
+
+The Bot can be deployed in any way you want.
+The repo currently provides a Procfile for Heroku deployent and a Dockerfile for a containerized Deployment.
+
+The bot calls the AI classifier for each image attachment of a discord message, then stores the concepts in google firebase upon classification.
+
+Environment variables:
+
+- `DISCORD_BOT_TOKEN`: the gateway token for the bot
+- `FIREBASE_API_TOKEN`: the api token for google firebase
+
+### The AI
+
+This implementation currently uses the external Service Clarifai for image classification. This can be replaced by any AI model you want (e.g. Tensorflow) by implementing the interfaces of `analyze/analyze.ts`.

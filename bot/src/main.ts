@@ -34,8 +34,8 @@ export const bot = new Client({
 });
 
 // Start the bot
-if (!process.env.BOT_TOKEN) {
-  throw Error("Could not find BOT_TOKEN in your environment");
+if (!process.env.DISCORD_BOT_TOKEN) {
+  throw Error("Could not find DISCORD_BOT_TOKEN in your environment");
 }
 
-bot.login(process.env.BOT_TOKEN);
+bot.login(process.env.DISCORD_BOT_TOKEN);
