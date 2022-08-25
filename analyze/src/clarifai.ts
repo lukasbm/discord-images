@@ -3,7 +3,6 @@ import service from "clarifai-nodejs-grpc/proto/clarifai/api/service_pb";
 import resources from "clarifai-nodejs-grpc/proto/clarifai/api/resources_pb";
 import { StatusCode } from "clarifai-nodejs-grpc/proto/clarifai/api/status/status_code_pb";
 import { V2Client } from "clarifai-nodejs-grpc/proto/clarifai/api/service_grpc_pb";
-import { AnalyzeImage } from "./analyze";
 
 const clarifai = new V2Client(
   "api.clarifai.com",
@@ -13,12 +12,11 @@ const clarifai = new V2Client(
 if (!process.env.CLARIFAI_API_KEY) {
   throw Error("Could not find CLARIFAI_API_KEY in your environment");
 }
+
 const metadata = new grpc.Metadata();
 metadata.set("authorization", process.env.CLARIFAI_API_KEY);
 
-let analyzeImage: AnalyzeImage;
-
-analyzeImage = (url: string): Array<resources.Concept> => {
+const analyzeImage = (url: string): Array<resources.Concept> => {
   const request = new service.PostModelOutputsRequest();
   // This is the model ID of a publicly available General model. You may use any other public or custom model ID.
   request.setModelId("aaa03c23b3724a16a56b629203edc62c");
