@@ -7,10 +7,8 @@
     "strict": false,
     "moduleResolution": "Node",
     "allowSyntheticDefaultImports": true,
-
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-
     "skipLibCheck": false,
     "forceConsistentCasingInFileNames": true
   },

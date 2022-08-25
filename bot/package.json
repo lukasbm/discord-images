@@ -1,13 +1,11 @@
 {
   "name": "bot",
-  "version": "0.0.0",
   "private": true,
   "type": "module",
-  "main": "build/main.js",
   "scripts": {
     "build": "tsc",
     "dev": "ts-node-esm src/main.ts",
-    "start": "tsc && node build/main.js"
+    "start": "tsc && node dist/main.js"
   },
   "dependencies": {
     "discord.js": "^14.2.0",
