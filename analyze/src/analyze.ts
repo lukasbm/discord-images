@@ -1,14 +1,10 @@
-// export interface AnalyzeImage {
-//   (url: string): ImageClassification;
-// }
+export interface Analyze {
+  analyzeImage(url: string): ImageAnalysis;
+}
 
-export interface ImageClassification {}
-
-interface Concept {
+interface Classification {
+  label: string;
   confidence: number;
-  concept: string;
 }
 
-abstract class AnalyzeImage {
-  abstract analyzeImage(url: string): ImageClassification;
-}
+export type ImageAnalysis = Classification[];
