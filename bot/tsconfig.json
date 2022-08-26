@@ -1,16 +1,9 @@
 {
+  "extends": "../tsconfig-base.json",
   "compilerOptions": {
-    "target": "ES6",
-    "module": "ESNext",
     "outDir": "dist",
-    "rootDir": "src",
-    "strict": true,
-    "moduleResolution": "Node",
-    "allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "skipLibCheck": false,
-    "forceConsistentCasingInFileNames": true
+    "rootDir": "src"
   },
+  "references": [{ "path": "../analyze" }],
   "exclude": ["dist", "node_modules"]
 }

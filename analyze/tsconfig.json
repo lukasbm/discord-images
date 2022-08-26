@@ -1,16 +1,9 @@
 {
+  "extends": "../tsconfig-base.json",
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
     "outDir": "dist",
-    "rootDir": "src",
-    "strict": false,
-    "moduleResolution": "Node",
-    "allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "skipLibCheck": false,
-    "forceConsistentCasingInFileNames": true
+    "rootDir": "src"
   },
+  "references": [{ "path": "../bot" }],
   "exclude": ["dist", "node_modules"]
 }
