@@ -1,5 +1,5 @@
-export interface Analyze {
-  analyzeImage(url: string): ImageAnalysis;
+export interface AnalyzeImage {
+  (url: string): ImageAnalysis;
 }
 
 interface Classification {

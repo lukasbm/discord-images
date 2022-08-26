@@ -3,6 +3,8 @@ import "reflect-metadata";
 import { IntentsBitField } from "discord.js";
 import { ArgsOf, Client, Discord, On } from "discordx";
 
+import { analyzeImage } from "analyze/src/clarifai";
+
 @Discord()
 export class Bot {
   private static _client: Client;
@@ -43,7 +45,8 @@ export class Bot {
         url: attachment.url,
         proxyUrl: attachment.proxyURL,
       };
-      console.log(data);
+      const analysis = analyzeImage(attachment.url);
+      console.log(data, analysis);
     }
   }
 

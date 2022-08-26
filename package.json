@@ -1,6 +1,7 @@
 {
   "name": "discord-images",
   "version": "0.0.0",
+  "private": true,
   "description": "Explore your discord images, categorized in an easy to use interface",
   "repository": {
     "type": "git",
