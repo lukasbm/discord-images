@@ -35,6 +35,8 @@ export class Bot {
     if (!message.attachments || message.attachments.size == 0) return;
 
     for (let attachment of message.attachments.values()) {
+      // TODO check if attachment is an image
+
       // exclude one-time-view images
       if (attachment.ephemeral) continue;
 

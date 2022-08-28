@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc --build --clean"
+    "build": "tsc --build"
   },
   "dependencies": {
     "clarifai-nodejs-grpc": "^8.0.0"
