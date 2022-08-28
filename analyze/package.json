@@ -3,9 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc --build --clean",
-    "dev": "ts-node-esm src/main.ts",
-    "start": "tsc && node dist/main.js"
+    "build": "tsc --build --clean"
   },
   "dependencies": {
     "clarifai-nodejs-grpc": "^8.0.0"
