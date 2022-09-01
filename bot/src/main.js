@@ -18,7 +18,9 @@ client.on("messageCreate", (message) => {
   if (!message.attachments || message.attachments.size == 0) return;
 
   for (let attachment of message.attachments.values()) {
-    // TODO check if attachment is an image
+    // check if attachment is an image
+    if (!attachment.contentType || !attachment.contentType.startsWith("image"))
+      continue;
 
     // exclude one-time-view images
     if (attachment.ephemeral) continue;
