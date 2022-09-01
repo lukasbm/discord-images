@@ -32,8 +32,9 @@ client.on("messageCreate", (message) => {
       url: attachment.url,
       proxyUrl: attachment.proxyURL,
     };
-    const analysis = analyzeImage(attachment.url);
-    console.log(data, analysis);
+    analyzeImage(attachment.url)
+      .then((analysis) => console.log(analysis))
+      .catch((err) => console.error(err));
   }
 });
 
