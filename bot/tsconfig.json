@@ -1,9 +1,0 @@
-{
-  "extends": "../tsconfig-base.json",
-  "compilerOptions": {
-    "outDir": "dist",
-    "rootDir": "src"
-  },
-  "references": [{ "path": "../analyze" }],
-  "exclude": ["dist", "node_modules"]
-}

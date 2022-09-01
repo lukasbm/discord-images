@@ -1,3 +1,5 @@
+## FIXME build step is no longer required
+
 ## build runner
 FROM node:lts-alpine as build-runner
 
