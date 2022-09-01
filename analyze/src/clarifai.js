@@ -2,8 +2,7 @@ import { grpc } from "clarifai-nodejs-grpc";
 // import service from "clarifai-nodejs-grpc/proto/clarifai/api/service_pb";
 // import resources from "clarifai-nodejs-grpc/proto/clarifai/api/resources_pb";
 // import { StatusCode } from "clarifai-nodejs-grpc/proto/clarifai/api/status/status_code_pb";
-import { V2Client } from "clarifai-nodejs-grpc/proto/clarifai/api/service_grpc_pb";
-import { AnalyzeImage, ImageAnalysis } from "./analyze";
+import { V2Client } from "clarifai-nodejs-grpc/proto/clarifai/api/service_grpc_pb.js";
 
 if (!process.env.CLARIFAI_API_KEY) {
   throw Error("Could not find CLARIFAI_API_KEY in your environment");
@@ -16,7 +15,7 @@ const client = new V2Client(
 const metadata = new grpc.Metadata();
 metadata.set("authorization", process.env.CLARIFAI_API_KEY);
 
-export const analyzeImage: AnalyzeImage = (url: string): ImageAnalysis => {
+export const analyzeImage = (url) => {
   return [{ confidence: 1, label: "lul" }];
 };
 

@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "cd src && node bot.js"
+    "start": "cd src && node main.js"
   },
   "dependencies": {
     "discord.js": "^14.2.0",
