@@ -23,6 +23,7 @@ Environment variables:
 
 - `DISCORD_BOT_TOKEN`: the gateway token for the bot
 - `FIREBASE_API_TOKEN`: the api token for google firebase
+- `GOOGLE_APPLICATION_CREDENTIALS`: (absolute) path to the firebase admin sdk secret which includes the acces keys/tokens
 
 ### The AI
 

@@ -2,6 +2,7 @@
 .vscode
 .env
 .env.local
+firebase-adminsdk.json
 
 # folders
 node_modules

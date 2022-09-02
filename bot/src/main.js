@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import { Client, IntentsBitField } from "discord.js";
 import { analyzeImage } from "analyze/src/clarifai.js";
+import { firestore } from "./firebase";
 
 let client = new Client({
   intents: [
@@ -25,6 +26,7 @@ client.on("messageCreate", (message) => {
     // exclude one-time-view images
     if (attachment.ephemeral) continue;
 
+    // extract useful data
     const data = {
       attachmentId: attachment.id,
       filename: attachment.name,
@@ -32,9 +34,16 @@ client.on("messageCreate", (message) => {
       url: attachment.url,
       proxyUrl: attachment.proxyURL,
     };
+
+    // run AI analysis
     analyzeImage(attachment.url)
       .then((analysis) => console.log(analysis))
       .catch((err) => console.error(err));
+
+    // TODO store results
+    // firestore.runTransaction(transaction => {
+    //   const documentRef = firestore.doc("images");
+    // });
   }
 });
 
