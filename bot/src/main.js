@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { Client, IntentsBitField } from "discord.js";
 import { analyzeImage } from "analyze/src/clarifai.js";
-import { firestore } from "./firebase";
+import { firestore } from "./firebase.js";
 
 let client = new Client({
   intents: [
@@ -15,7 +15,7 @@ client.once("ready", () => {
   console.log("Bot started...");
 });
 
-client.on("messageCreate", (message) => {
+client.on("messageCreate", async (message) => {
   if (!message.attachments || message.attachments.size == 0) return;
 
   for (let attachment of message.attachments.values()) {
@@ -27,23 +27,43 @@ client.on("messageCreate", (message) => {
     if (attachment.ephemeral) continue;
 
     // extract useful data
-    const data = {
+    let data = {
+      // general message data
+      messageId: message.id,
+      channelId: message.channelId,
+      guildId: message.guildId,
+      author: message.author.id,
+      content: message.cleanContent,
+      time: message.createdTimestamp,
+      messageUrl: message.url,
+      // attachment data
       attachmentId: attachment.id,
       filename: attachment.name,
       contentType: attachment.contentType,
       url: attachment.url,
       proxyUrl: attachment.proxyURL,
+      altText: attachment.description,
+      height: attachment.height,
+      width: attachment.width,
+      filesize: attachment.size,
     };
 
     // run AI analysis
-    analyzeImage(attachment.url)
-      .then((analysis) => console.log(analysis))
-      .catch((err) => console.error(err));
+    try {
+      const analysis = await analyzeImage(attachment.url);
+      console.log(analysis);
+      data = { ...data, labels: analysis };
+    } catch (err) {
+      console.error(err);
+    }
 
-    // TODO store results
-    // firestore.runTransaction(transaction => {
-    //   const documentRef = firestore.doc("images");
-    // });
+    // store results
+    try {
+      await firestore.collection("pictures").add(data);
+      console.log("uploaded data");
+    } catch (err) {
+      console.error(err);
+    }
   }
 });
 
