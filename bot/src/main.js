@@ -2,6 +2,7 @@ import "reflect-metadata";
 import { Client, IntentsBitField } from "discord.js";
 import { analyzeImage } from "analyze/src/clarifai.js";
 import { firestore } from "./firebase.js";
+import { FieldValue } from "firebase-admin/firestore";
 
 let client = new Client({
   intents: [
@@ -61,6 +62,19 @@ client.on("messageCreate", async (message) => {
     try {
       await firestore.collection("pictures").add(data);
       console.log("uploaded data");
+    } catch (err) {
+      console.error(err);
+    }
+
+    // update stats
+    try {
+      const stats = await firestore.collection("statistics").doc("labels");
+      let val = {};
+      data.labels.forEach((x) => {
+        val[x.concept] = FieldValue.increment(1);
+      });
+      console.log(val);
+      await stats.set(val, { merge: true });
     } catch (err) {
       console.error(err);
     }
