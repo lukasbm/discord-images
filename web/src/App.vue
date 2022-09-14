@@ -1,7 +1,8 @@
 <script setup>
-import { ref } from "vue";
 import ImageList from "./components/ImageList.vue";
 import SearchBox from "./components/SearchBox.vue";
+import Header from "./components/Header.vue";
+import { ref } from "vue";
 import { getImages } from "./services/data";
 
 const images = ref();
@@ -18,6 +19,7 @@ const updateImages = (queryLabels) => {
 </script>
 
 <template>
+  <Header />
   <main class="container py-4 px-3 mx-auto">
     <SearchBox class="mb-4" @update-images="updateImages" />
     <ImageList :images="images" @update-images="updateImages" />
