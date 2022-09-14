@@ -1,3 +1,4 @@
+import { collection, getDocs } from "firebase/firestore";
 import { firestore } from "./firebase";
 
 // get all statistics
@@ -6,4 +7,13 @@ const getStatistics = async () => {
   return snapshot.docs.map((doc) => doc.data());
 };
 
-export { getStatistics };
+const getImages = async () => {
+  const querySnapshot = await getDocs(collection(firestore, "pictures"));
+  let docs = [];
+  querySnapshot.forEach((doc) => {
+    docs.push(doc.data());
+  });
+  return docs;
+};
+
+export { getStatistics, getImages };
