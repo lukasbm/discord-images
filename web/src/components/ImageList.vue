@@ -17,7 +17,18 @@ emit("updateImages");
         <img :src="img.url" />
 
         <div class="card-body">
-          <h5 class="card-title">{{ img.filename }} - {{ img.content }}</h5>
+          <h5
+            v-if="
+              (img.filename && img.filename != 'unknown.png') ||
+              (img.content && img.content != '')
+            "
+            class="card-title"
+          >
+            <span v-if="img.filename != 'unknown.png'">
+              {{ img.filename }} -
+            </span>
+            {{ img.content }}
+          </h5>
           <p v-if="img.labels" class="card-text">
             <span
               v-for="label of img.labels"
