@@ -32,13 +32,7 @@ export const analyzeImage = (url) => {
         }
 
         const concepts = response.outputs[0].data.concepts;
-        resolve(
-          concepts
-            .map((x) => {
-              return { concept: x.name, value: x.value };
-            })
-            .filter((x) => x.value > 0.8)
-        );
+        resolve(concepts.filter((x) => x.value > 0.8).map((x) => x.name));
       }
     );
   });

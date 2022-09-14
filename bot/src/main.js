@@ -52,8 +52,8 @@ client.on("messageCreate", async (message) => {
     // run AI analysis
     try {
       const analysis = await analyzeImage(attachment.url);
-      console.log(analysis);
       data = { ...data, labels: analysis };
+      console.log(data);
     } catch (err) {
       console.error(err);
     }
@@ -61,7 +61,7 @@ client.on("messageCreate", async (message) => {
     // store results
     try {
       await firestore.collection("pictures").add(data);
-      console.log("uploaded data");
+      console.log("uploaded data for attachment", attachment.id);
     } catch (err) {
       console.error(err);
     }
@@ -71,10 +71,10 @@ client.on("messageCreate", async (message) => {
       const stats = await firestore.collection("statistics").doc("labels");
       let val = {};
       data.labels.forEach((x) => {
-        val[x.concept] = FieldValue.increment(1);
+        val[x] = FieldValue.increment(1);
       });
-      console.log(val);
       await stats.set(val, { merge: true });
+      console.log("updated statistics for attachment", attachment.id);
     } catch (err) {
       console.error(err);
     }
