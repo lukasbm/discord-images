@@ -1,23 +1,15 @@
 <script setup>
-import { ref } from "vue";
-import { getImages } from "../services/data.js";
+const props = defineProps(["images"]);
+const emit = defineEmits(["updateImages"]);
 
-console.log("fetching images ...");
-
-const images = ref();
-
-getImages()
-  .then((data) => {
-    images.value = data;
-    console.log(data);
-  })
-  .catch((err) => console.error(err));
+// fetch images on startup
+emit("updateImages");
 </script>
 
 <template>
   <div class="row" data-masonry='{"percentPosition": true }'>
     <div
-      v-for="img of images"
+      v-for="img of props.images"
       :key="img.messageId"
       class="col-sm-6 col-lg-4 mb-4"
     >
@@ -29,9 +21,9 @@ getImages()
           <p v-if="img.labels" class="card-text">
             <span
               v-for="label of img.labels"
-              :key="label.concept"
+              :key="label"
               class="badge rounded-pill text-bg-primary"
-              >{{ label.concept }}</span
+              >{{ label }}</span
             >
           </p>
           <p v-if="img.altText" class="card-text">
