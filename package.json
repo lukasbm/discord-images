@@ -22,7 +22,8 @@
   "workspaces": [
     "analyze",
     "bot",
-    "web"
+    "web",
+    "functions"
   ],
   "scripts": {
     "format": "prettier --write .",

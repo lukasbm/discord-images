@@ -13,6 +13,34 @@
           "order": "DESCENDING"
         }
       ]
+    },
+    {
+      "collectionGroup": "pictures",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        {
+          "fieldPath": "labels",
+          "arrayConfig": "CONTAINS"
+        },
+        {
+          "fieldPath": "time",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "pictures",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "labels",
+          "arrayConfig": "CONTAINS"
+        },
+        {
+          "fieldPath": "time",
+          "order": "ASCENDING"
+        }
+      ]
     }
   ],
   "fieldOverrides": []
