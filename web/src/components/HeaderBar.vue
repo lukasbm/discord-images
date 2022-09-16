@@ -1,3 +1,7 @@
+<script setup>
+import AuthButton from "./AuthButton.vue";
+</script>
+
 <template>
   <header class="p-3 text-bg-dark">
     <div class="container">
@@ -24,11 +28,9 @@
           />
         </form> -->
 
-        <!-- <div class="text-end">
-          <button type="button" class="btn btn-outline-light me-2">
-            Login TODO
-          </button>
-        </div> -->
+        <div class="text-end">
+          <AuthButton />
+        </div>
       </div>
     </div>
   </header>

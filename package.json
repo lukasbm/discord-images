@@ -26,8 +26,10 @@
   ],
   "scripts": {
     "format": "prettier --write .",
+    "deploy": "firebase deploy",
     "deploy:hosting": "firebase deploy --only hosting:discord-images",
-    "deploy": "firebase deploy"
+    "deploy:functions": "firebase deploy --only functions",
+    "logs:functions": "firebase functions:log"
   },
   "devDependencies": {
     "prettier": "^2.7.1"
