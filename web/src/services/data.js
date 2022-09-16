@@ -3,6 +3,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  orderBy,
   query,
   where,
 } from "firebase/firestore";
@@ -17,11 +18,12 @@ const getStatistics = async () => {
 const getImages = async (queryLabels) => {
   let q = undefined;
   if (!queryLabels || queryLabels.length == 0) {
-    q = query(collection(firestore, "pictures"));
+    q = query(collection(firestore, "pictures"), orderBy("time", "desc"));
   } else {
     q = query(
       collection(firestore, "pictures"),
-      where("labels", "array-contains-any", queryLabels)
+      where("labels", "array-contains-any", queryLabels),
+      orderBy("time", "desc")
     );
   }
   const snapshot = await getDocs(q);
