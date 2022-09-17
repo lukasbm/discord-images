@@ -1,12 +1,9 @@
 import { signInWithCustomToken, signOut } from "firebase/auth";
-import { auth } from "./firebase";
+import { httpsCallable } from "firebase/functions";
+import { auth, functions } from "./firebase";
 
-// TODO the token is fetched from discord oauth flow
-// which is run on firebase cloud function
-const login = (token) => {
-  // TODO sign token as jwt??? with google key?? as cloud founction???
-  const jwtToken = "eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJ1aWQiOiJ0ZXN0MTIzIiwiZXhwIjoxNjYzMzQxODMxLCJpc3MiOiJmaXJlYmFzZS1hZG1pbnNkay03ZGRwMUBkaXNjb3JkLWltYWdlcy5pYW0uZ3NlcnZpY2VhY2NvdW50LmNvbSIsInN1YiI6ImZpcmViYXNlLWFkbWluc2RrLTdkZHAxQGRpc2NvcmQtaW1hZ2VzLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwiYXVkIjoiaHR0cHM6Ly9pZGVudGl0eXRvb2xraXQuZ29vZ2xlYXBpcy5jb20vZ29vZ2xlLmlkZW50aXR5LmlkZW50aXR5dG9vbGtpdC52MS5JZGVudGl0eVRvb2xraXQiLCJpYXQiOiIxNjYzMzM4MTU3In0.rdnotRpynLzm07P2kocb5esm6kDE3qAOrCAtjYkxTgQ";
-  signInWithCustomToken(auth, jwtToken)
+const firebaseSignIn = (jwt) => {
+  signInWithCustomToken(auth, jwt)
     .then((userCredential) => {
       const user = userCredential.user;
       console.log(user);
@@ -16,10 +13,60 @@ const login = (token) => {
     });
 };
 
-const logout = () => {
+const firebaseSignOut = () => {
   signOut(auth)
     .then(() => console.log("sign out successful"))
     .catch((err) => console.error(err));
 };
 
-export { login, logout };
+const buildDiscordRedirect = () => {
+  const clientId = "1011648062915096627"; // TODO replace with vite env variable
+  const redirectUri = window.location.origin;
+  const redirectState = Math.random()
+    .toString(36)
+    .replace(/[^a-z]+/g, "")
+    .substring(0, 5);
+  const authScope = "identify guilds";
+  return {
+    url:
+      `https://discord.com/oauth2/authorize` +
+      `?response_type=code&client_id=${encodeURIComponent(clientId)}` +
+      `&scope=${encodeURIComponent(authScope)}` +
+      `&state=${encodeURIComponent(redirectState)}` +
+      `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+      `&prompt=consent`,
+    state: redirectState,
+  };
+};
+
+const login = () => {
+  // redirect to discord login
+  const discordRedirect = buildDiscordRedirect();
+  window.location.href = discordRedirect.url;
+  // fetch token by parsing reponse params hash
+  const hashParams = window.location.hash
+    ?.substring(1)
+    .split("&")
+    .map((v) => v.split("="))
+    .reduce((pre, [key, value]) => ({ ...pre, [key]: value }), {});
+
+  if (decodeURIComponent(hashParams["state"]) != discordRedirect.state) {
+    throw new Error("states dont match.");
+  }
+  const authCode = hashParams["access_token"];
+
+  // FIXME remove token from url
+  window.location.hash = "";
+
+  // use authCode to fetch jwt from firebase
+  const discordAuth = httpsCallable(functions, "discordAuth");
+  discordAuth({ authCode: authCode })
+    .then((result) => {
+      console.log("the firebase jtw token is", result);
+      // attempt login
+      firebaseSignIn(result.data.text);
+    })
+    .catch((err) => console.error(err));
+};
+
+export { firebaseSignIn, firebaseSignOut, login };
