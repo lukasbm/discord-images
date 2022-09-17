@@ -27,6 +27,7 @@ const buildDiscordRedirect = () => {
     .replace(/[^a-z]+/g, "")
     .substring(0, 5);
   const authScope = "identify guilds";
+  // TODO build URL using url class?
   return {
     url:
       `https://discord.com/oauth2/authorize` +

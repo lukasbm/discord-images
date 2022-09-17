@@ -9,6 +9,9 @@ const auth = getAuth(app);
 
 const discordApiBase = "https://discord.com/api/v10/";
 
+const clientId = process.env.DISCORD_CLIENT_ID;
+const clientSecret = process.env.DISCORD_CLIENT_SECRET;
+
 const discordCodeExchange = async (authCode, redirectUri) => {
   let response = await fetch(`${discordApiBase}/oauth2/token`, {
     method: "POST",
@@ -22,6 +25,16 @@ const discordCodeExchange = async (authCode, redirectUri) => {
       code: authCode,
       redirect_uri: redirectUri,
     }),
+  });
+  return response.json();
+};
+
+const discordApiCall = async (resource, discordAuthToken) => {
+  let response = await fetch(`${discordApiBase}/${resource}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${discordAuthToken}`,
+    },
   });
   return response.json();
 };
@@ -46,28 +59,30 @@ exports.discordAuth = functions.https.onCall(async (data, context) => {
   // fetch token for authCode
 
   // discord access token exchange
-  discordCodeExchange(data.authCode)
+  const discordToken = await CodeExchange(data.authCode);
 
-  // TODO move this to client front end
-  // TODO get user id and guild data from discord api
-  // https://discord.com/api/v10/users/@me
-  // https://discord.com/api/v10/users/@me/guilds
-  fetch();
+  // gather relevant userinfo
+  const userinfo = await discordApiCall(
+    "/users/@me",
+    discordToken["access_token"]
+  );
+  const guilds = await discordApiCall(
+    "users/@me",
+    discordToken["access_token"]
+  );
 
-  // TODO check if discord token is still valid before signin jwt token on it
-  const userId = "TODO"; // TODO get from
+  // TODO check if discord token is valid?
+
+  const userId = userinfo["id"];
   const additionalClaims = {
-    guilds: "TODO",
+    guilds: guilds.map((x) => x["id"]),
   };
-  const jwtToken = createJwtToken(userId, additionalClaims);
-  // TODO can i use this token to directly authenticate caller?
+  // TODO can i use this token to directly authenticate the caller?
+  const jwtToken = await createJwtToken(userId, additionalClaims);
   if (jwtToken) {
-    return;
+    return jwtToken;
   } else {
-    throw new functions.https.HttpsError(
-      "permission-denied",
-      "discord-token invalid"
-    );
+    throw new functions.https.HttpsError("permission-denied", "TODO");
   }
 });
 
