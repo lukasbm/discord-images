@@ -30,9 +30,18 @@ const discordCodeExchange = async (authCode, redirectUri) => {
       },
       body: params,
     });
-    if (!response.ok) return undefined;
-    else return response.json();
+    if (!response.ok) {
+      console.error(
+        "discordCodeExchange - request error:",
+        response.status,
+        response.statusText
+      );
+      return undefined;
+    } else {
+      return response.json();
+    }
   } catch (err) {
+    console.error("discordCodeExchange - request error:", err);
     return undefined;
   }
 };
@@ -45,9 +54,18 @@ const discordApiCall = async (resource, discordAuthToken) => {
         Authorization: `Bearer ${discordAuthToken}`,
       },
     });
-    if (!response.ok) return undefined;
-    else return response.json();
+    if (!response.ok) {
+      console.error(
+        "discordApiCall - request error:",
+        response.status,
+        response.statusText
+      );
+      return undefined;
+    } else {
+      return response.json();
+    }
   } catch (err) {
+    console.error("discordApiCall - request error:", err);
     return undefined;
   }
 };
@@ -114,7 +132,7 @@ const createJwtToken = async (userId, additionalClaims) => {
   try {
     return auth.createCustomToken(userId, additionalClaims);
   } catch (error) {
-    console.error("Error creating custom token:", error);
+    console.error("createJwtToken - Error creating custom token:", error);
     return undefined;
   }
 };
