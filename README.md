@@ -25,6 +25,11 @@ Environment variables:
 - `FIREBASE_API_TOKEN`: the api token for google firebase
 - `GOOGLE_APPLICATION_CREDENTIALS`: (absolute) path to the firebase admin sdk secret which includes the acces keys/tokens
 
+in `./functions/.env`:
+
+- `DISCORD_CLIENT_ID`: discord oauth client id
+- `DISCORD_CLIENT_SECRET`: discord oauth client secret
+
 ### The AI
 
 This implementation currently uses the external Service Clarifai for image classification. This can be replaced by any AI model you want (e.g. Tensorflow) by implementing the interfaces of `analyze/analyze.ts`.

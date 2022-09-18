@@ -55,7 +55,7 @@ const discordCodeRefresh = async (refreshToken) => {
   return response.json();
 };
 
-exports.discordAuth = functions.https.onCall(async (data, context) => {
+export const discordAuth = functions.https.onCall(async (data, context) => {
   // fetch token for authCode
 
   // discord access token exchange
