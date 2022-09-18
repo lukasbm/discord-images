@@ -25,16 +25,19 @@ for the bot:
 
 - `DISCORD_BOT_TOKEN`: the gateway token for the bot
 - `FIREBASE_API_TOKEN`: the api token for google firebase
+- `./serviceAccount.json`: is the file that countains the private key for the admin sdk, it should be located in the bot directory.
 
-in `./functions/.env`:
+for cloud functions:
 
-- `DISCORD_CLIENT_ID`: discord oauth client id
-- `DISCORD_CLIENT_SECRET`: discord oauth client secret
+- `./serviceAccount.json`: is the file that countains the private key for the admin sdk, it should be located in the root of the repo.
+- `DISCORD_CLIENT_ID`: discord oauth client id, in `./functions/.env`
+- `DISCORD_CLIENT_SECRET`: discord oauth client secret, in `./functions/.env`
 
 for the frontend:
 
 - `vite.DISCORD_CLIENT_ID`: TODO
+- `vite.FIREBASE_API_KEY`: TODO
+- `vite.FIREBASE_PROJECT_ID`: TODO
+- etc. firebase config
 
-for all:
-
-- `./serviceAccount.json`: is the file that countains the private key for the admin sdk, it should be located in the root of the repo.
+Note that the `serviceAccount.json` file is the same for the functions and the bot. Due to a bug in firebase the file has to there twice.
