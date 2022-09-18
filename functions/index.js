@@ -4,6 +4,7 @@ import functions from "firebase-functions";
 import { initializeApp, cert } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import serviceAccount from "./serviceAccount.json" assert { type: "json" };
+import fetch from "node-fetch";
 
 const adminConfig = JSON.parse(process.env.FIREBASE_CONFIG);
 adminConfig.credential = cert(serviceAccount);
