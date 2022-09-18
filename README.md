@@ -15,21 +15,26 @@ Explore your discord images, categorized in an easy to use interface
 ### Bot
 
 The Bot can be deployed in any way you want.
-The repo currently provides a Procfile for Heroku deployent and a Dockerfile for a containerized Deployment.
+The repo currently provides a Dockerfile for a containerized Deployment.
 
 The bot calls the AI classifier for each image attachment of a discord message, then stores the concepts in google firebase upon classification.
 
-Environment variables:
+### Environment variables
+
+for the bot:
 
 - `DISCORD_BOT_TOKEN`: the gateway token for the bot
 - `FIREBASE_API_TOKEN`: the api token for google firebase
-- `GOOGLE_APPLICATION_CREDENTIALS`: (absolute) path to the firebase admin sdk secret which includes the acces keys/tokens
 
 in `./functions/.env`:
 
 - `DISCORD_CLIENT_ID`: discord oauth client id
 - `DISCORD_CLIENT_SECRET`: discord oauth client secret
 
-### The AI
+for the frontend:
 
-This implementation currently uses the external Service Clarifai for image classification. This can be replaced by any AI model you want (e.g. Tensorflow) by implementing the interfaces of `analyze/analyze.ts`.
+- `vite.DISCORD_CLIENT_ID`: TODO
+
+for all:
+
+- `./serviceAccount.json`: is the file that countains the private key for the admin sdk, it should be located in the root of the repo.
