@@ -10,6 +10,7 @@ Then run `npm run start`
 First build the image: `docker build -t discord-images/bot .`
 
 Then run it. Make sure you have the serviceAccount and the environment variables ready.
+
 ```bash
 docker run discord-images/bot -d --rm --name discord-images-bot
     -v ./serviceAccount.json:/app/serviceAccount.json:ro

@@ -3,7 +3,7 @@ import { httpsCallable } from "firebase/functions";
 import { auth, functions } from "./firebase";
 
 const firebaseSignIn = (jwt) => {
-  console.log("firebase signing in with jwt");
+  console.log("firebase signing in with jwt:", jwt);
   signInWithCustomToken(auth, jwt)
     .then((userCredential) => {
       const user = userCredential.user;
@@ -28,8 +28,8 @@ const firebaseCreateToken = async (authCode) => {
     authCode: authCode,
     redirectUri: window.location.origin,
   });
-  console.log("the firebase jtw token is", result);
-  return result;
+  console.log("the firebase jtw token is", result.data);
+  return result.data;
 };
 
 const buildDiscordRedirect = () => {
