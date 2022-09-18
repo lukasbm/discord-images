@@ -42,24 +42,22 @@ const buildDiscordRedirect = () => {
 
 const login = () => {
   // redirect to discord login
-  const discordRedirect = buildDiscordRedirect();
-  window.location.href = discordRedirect.url;
-  // fetch token by parsing reponse params hash
-  const hashParams = window.location.hash
-    ?.substring(1)
-    .split("&")
-    .map((v) => v.split("="))
-    .reduce((pre, [key, value]) => ({ ...pre, [key]: value }), {});
+  // const discordRedirect = buildDiscordRedirect();
+  // console.log("redirecting to ", discordRedirect);
+  // window.location.replace(discordRedirect.url);
 
-  if (decodeURIComponent(hashParams["state"]) != discordRedirect.state) {
-    throw new Error("states dont match.");
-  }
-  const authCode = hashParams["access_token"];
+  // fetch token by parsing reponse query params
+  const params = new URLSearchParams(window.location.search);
+  // if (params.get("state") != discordRedirect.state) {
+  //   throw new Error("states dont match.");
+  // }
+  const authCode = params.get("code");
 
   // FIXME remove token from url
-  window.location.hash = "";
+  // window.location.hash = "";
 
   // use authCode to fetch jwt from firebase
+  console.log("calling firebase cloud function");
   const discordAuth = httpsCallable(functions, "discordAuth");
   discordAuth({ authCode: authCode })
     .then((result) => {
