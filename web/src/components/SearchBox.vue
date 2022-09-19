@@ -1,25 +1,20 @@
 <script setup>
 import { ref } from "vue";
-import { getStatistics } from "../services/data.js";
-
-const emit = defineEmits(["updateImages"]);
+import { getStatistics, getImages } from "../services/data.js";
 
 const statistics = ref();
 const query = ref();
 
 const suggested = () => {
   if (!statistics.value) return [];
-
   // create items array
   const items = Object.keys(statistics.value).map(function (key) {
     return [key, statistics.value[key]];
   });
-
   // Sort the array based on the second element
   items.sort(function (first, second) {
     return second[1] - first[1];
   });
-
   // return
   return items.slice(0, 5).map((x) => x[0]);
 };
@@ -28,10 +23,9 @@ const search = () => {
   const queryLabels = query.value
     ? query.value.split(",").map((x) => x.trim())
     : [];
-  emit("updateImages", queryLabels);
+  getImages(queryLabels);
 };
 
-console.log("fetching statistics ...");
 getStatistics()
   .then((data) => {
     statistics.value = data;

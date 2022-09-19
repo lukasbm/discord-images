@@ -1,60 +1,55 @@
 <script setup>
+import { onMounted } from "vue";
 import {
   buildDiscordRedirect,
   firebaseCreateToken,
   firebaseSignIn,
   firebaseSignOut,
+  authStatus,
+  AuthenticationStatus,
 } from "../services/auth";
 
-const discordRedirect = buildDiscordRedirect();
+const login = () => {
+  const discordRedirect = buildDiscordRedirect();
+  sessionStorage.setItem("lastDiscordAuthState", discordRedirect.state);
+  // redirect
+  window.location.href = discordRedirect.url;
+};
 
-// replace old state with new one
-sessionStorage.setItem(
-  "lastDiscordAuthState",
-  sessionStorage.getItem("currentDiscordAuthState")
-);
-sessionStorage.setItem("currentDiscordAuthState", discordRedirect.state);
+onMounted(() => {
+  let authParams = new URLSearchParams(window.location.search);
 
-let authParams = new URLSearchParams(window.location.search);
-let showAuthRedirect = false;
-
-if (authParams.has("code") && authParams.has("state")) {
-  console.log("params present, starting login process");
-  if (
-    sessionStorage.getItem("lastDiscordAuthState") != authParams.get("state")
-  ) {
-    console.error("states dont match");
-    firebaseSignOut();
-    localStorage.remove("firebaseJwt");
-    showAuthRedirect = true;
+  if (authParams.has("code") && authParams.has("state")) {
+    console.log("params present, starting login process");
+    if (
+      sessionStorage.getItem("lastDiscordAuthState") != authParams.get("state")
+    ) {
+      console.error("states dont match");
+      firebaseSignOut();
+      localStorage.removeItem("firebaseJwt");
+    } else {
+      firebaseCreateToken(authParams.get("code"))
+        .then((result) => {
+          localStorage.setItem("firebaseJwt", result);
+          firebaseSignIn(result);
+        })
+        .catch((err) => console.error(err));
+    }
   } else {
-    firebaseCreateToken(authParams.get("code"))
-      .then((result) => {
-        localStorage.setItem("firebaseJwt", result);
-        firebaseSignIn(result);
-      })
-      .catch((err) => console.error(err));
+    console.log("params not present");
   }
-} else {
-  console.log("params not present");
-
-  if (localStorage.getItem("firebaseJwt") == null) {
-    showAuthRedirect = true;
-  }
-}
+});
 </script>
 
 <template>
-  <a
-    v-if="showAuthRedirect"
-    :href="discordRedirect.url"
+  <button
+    v-if="authStatus != AuthenticationStatus.authenticated"
+    @click="login()"
     class="btn btn-outline-light me-2"
-    >Sign In</a
   >
-  <div v-else>
-    signed in as: TODO
-    <button @click="firebaseSignOut()" class="btn btn-outline-secondary">
-      Sign Out
-    </button>
-  </div>
+    Sign In
+  </button>
+  <button v-else @click="firebaseSignOut()" class="btn btn-outline-secondary">
+    Sign Out
+  </button>
 </template>

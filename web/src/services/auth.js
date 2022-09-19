@@ -1,13 +1,24 @@
 import { signInWithCustomToken, signOut } from "firebase/auth";
 import { httpsCallable } from "firebase/functions";
 import { auth, functions } from "./firebase";
+import { ref } from "vue";
+
+const AuthenticationStatus = {
+  unauthenticated: 0,
+  authenticated: 1,
+  autenticating: 2,
+};
+const authStatus = ref(AuthenticationStatus.unauthenticated);
+
+const activeUser = ref(null); // TODO make sure it includes the guilds the user is member of
 
 const firebaseSignIn = (jwt) => {
   console.log("firebase signing in with jwt:", jwt);
   signInWithCustomToken(auth, jwt)
     .then((userCredential) => {
       const user = userCredential.user;
-      console.log(user);
+      console.log("firebase user", user);
+      authStatus.value = AuthenticationStatus.authenticated;
     })
     .catch((err) => {
       console.error(err);
@@ -17,7 +28,10 @@ const firebaseSignIn = (jwt) => {
 const firebaseSignOut = () => {
   console.log("firebase signing out");
   signOut(auth)
-    .then(() => console.log("sign out successful"))
+    .then(() => {
+      console.log("sign out successful");
+      authStatus.value = AuthenticationStatus.unauthenticated;
+    })
     .catch((err) => console.error(err));
 };
 
@@ -58,4 +72,7 @@ export {
   firebaseSignOut,
   firebaseCreateToken,
   buildDiscordRedirect,
+  authStatus,
+  AuthenticationStatus,
+  activeUser,
 };

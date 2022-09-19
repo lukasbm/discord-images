@@ -7,15 +7,21 @@ import {
   query,
   where,
 } from "firebase/firestore";
+import { ref } from "vue";
 import { firestore } from "./firebase";
+
+const images = ref(null);
 
 // get all statistics
 const getStatistics = async () => {
+  console.log("fetching statistics ...");
   const snapshot = await getDoc(doc(firestore, "statistics", "labels"));
   return snapshot.data();
 };
 
-const getImages = async (queryLabels) => {
+// TODO filter by tags of authenticated user
+const getImages = (queryLabels) => {
+  console.log("fetching images...");
   let q = undefined;
   if (!queryLabels || queryLabels.length == 0) {
     q = query(collection(firestore, "pictures"), orderBy("time", "desc"));
@@ -26,12 +32,15 @@ const getImages = async (queryLabels) => {
       orderBy("time", "desc")
     );
   }
-  const snapshot = await getDocs(q);
-  let docs = [];
-  snapshot.forEach((doc) => {
-    docs.push(doc.data());
-  });
-  return docs;
+  getDocs(q)
+    .then((snapshot) => {
+      let docs = [];
+      snapshot.forEach((doc) => {
+        docs.push(doc.data());
+      });
+      images.value = docs;
+    })
+    .catch((err) => console.error(err));
 };
 
-export { getStatistics, getImages };
+export { getStatistics, getImages, images };

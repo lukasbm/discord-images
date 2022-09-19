@@ -1,15 +1,11 @@
 <script setup>
-const props = defineProps(["images"]);
-const emit = defineEmits(["updateImages"]);
-
-// fetch images on startup
-emit("updateImages");
+import { images } from "../services/data";
 </script>
 
 <template>
   <div class="row" data-masonry='{"percentPosition": true }'>
     <div
-      v-for="img of props.images"
+      v-for="img of images"
       :key="img.messageId"
       class="col-sm-6 col-lg-4 mb-4"
     >
