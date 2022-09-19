@@ -3,21 +3,11 @@ import { httpsCallable } from "firebase/functions";
 import { auth, functions } from "./firebase";
 import { ref } from "vue";
 
-const AuthenticationStatus = {
-  unauthenticated: 0,
-  authenticated: 1,
-  autenticating: 2,
-};
-const authStatus = ref(AuthenticationStatus.unauthenticated);
-
-const activeUser = ref(null); // TODO make sure it includes the guilds the user is member of
-
 const firebaseSignIn = (jwt) => {
   console.log("firebase signing in with jwt:", jwt);
   signInWithCustomToken(auth, jwt)
-    .then((userCredential) => {
-      const user = userCredential.user;
-      console.log("firebase user", user);
+    .then(() => {
+      console.log("firebase user");
       authStatus.value = AuthenticationStatus.authenticated;
     })
     .catch((err) => {
@@ -44,6 +34,7 @@ const firebaseCreateToken = async (authCode) => {
     redirectUri: window.location.origin,
   });
   console.log("the firebase jtw token is", result.data);
+  localStorage.setItem("firebaseJwt", result.data);
   return result.data;
 };
 
@@ -55,17 +46,90 @@ const buildDiscordRedirect = () => {
     .replace(/[^a-z]+/g, "")
     .substring(0, 5);
   const authScope = "identify guilds";
-  return {
-    url:
-      `https://discord.com/oauth2/authorize` +
-      `?response_type=code&client_id=${encodeURIComponent(clientId)}` +
-      `&scope=${encodeURIComponent(authScope)}` +
-      `&state=${encodeURIComponent(redirectState)}` +
-      `&redirect_uri=${encodeURIComponent(redirectUri)}` +
-      `&prompt=consent`,
-    state: redirectState,
-  };
+  sessionStorage.setItem("lastDiscordAuthState", redirectState);
+  return (
+    `https://discord.com/oauth2/authorize` +
+    `?response_type=code&client_id=${encodeURIComponent(clientId)}` +
+    `&scope=${encodeURIComponent(authScope)}` +
+    `&state=${encodeURIComponent(redirectState)}` +
+    `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+    `&prompt=consent`
+  );
 };
+
+const AuthenticationStatus = {
+  unauthenticated: 0,
+  authenticated: 1,
+  authenticating: 2,
+};
+
+const authStatus = ref(AuthenticationStatus.unauthenticated);
+
+const activeFirebaseUser = ref(null);
+
+const userData = ref(null);
+
+const parseJwt = (token) => {
+  var base64Url = token.split(".")[1];
+  var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  var jsonPayload = decodeURIComponent(
+    window
+      .atob(base64)
+      .split("")
+      .map(function (c) {
+        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+      })
+      .join("")
+  );
+  return JSON.parse(jsonPayload);
+};
+
+function startup() {
+  // check jwt
+  const jwt = localStorage.getItem("firebaseJwt");
+  let jwtOk = true;
+  if (jwt != null) {
+    const payload = parseJwt(jwt);
+    if (!("exp" in payload) || Date.now() > payload["exp"]) jwtOk = false;
+    const uid = payload["uid"] ?? undefined;
+    const guilds = payload["claims"]["guilds"] ?? undefined;
+    if (!guilds || !uid) jwtOk = false;
+    else
+      userData.value = {
+        uid: uid,
+        guilds: guilds,
+      };
+  } else {
+    jwtOk = false;
+  }
+
+  if (!jwtOk) {
+    localStorage.removeItem("firebaseJwt");
+
+    let authParams = new URLSearchParams(window.location.search);
+    if (authParams.has("code") && authParams.has("state")) {
+      console.log("params present, starting login process");
+      if (
+        sessionStorage.getItem("lastDiscordAuthState") !=
+        authParams.get("state")
+      ) {
+        console.log("states dont match");
+        firebaseSignOut();
+      } else {
+        console.log("states match");
+        firebaseCreateToken(authParams.get("code"))
+          .then((result) => {
+            firebaseSignIn(result);
+          })
+          .catch((err) => console.error(err));
+      }
+    } else {
+      console.log("params not present");
+    }
+  }
+}
+
+startup();
 
 export {
   firebaseSignIn,
@@ -74,5 +138,6 @@ export {
   buildDiscordRedirect,
   authStatus,
   AuthenticationStatus,
-  activeUser,
+  activeFirebaseUser,
+  userData,
 };

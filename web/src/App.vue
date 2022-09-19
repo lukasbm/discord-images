@@ -12,8 +12,11 @@ import { authStatus, AuthenticationStatus } from "./services/auth";
       <SearchBox class="mb-4" />
       <ImageList :images="images" />
     </div>
-    <div v-else-if="(authStatus = AuthenticationStatus.autenticating)">
-      Loading
+    <div v-else-if="authStatus == AuthenticationStatus.authenticating">
+      Signing in ...
+      <div class="spinner-grow text-primary mx-auto" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
     </div>
     <div v-else class="alert alert-danger" role="alert">
       Please sign in before you continue!

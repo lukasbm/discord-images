@@ -1,8 +1,11 @@
 <script setup>
 import { ref } from "vue";
-import { getStatistics, getImages } from "../services/data.js";
+import {
+  updateImages,
+  updateStatistics,
+  statistics,
+} from "../services/data.js";
 
-const statistics = ref();
 const query = ref();
 
 const suggested = () => {
@@ -23,14 +26,10 @@ const search = () => {
   const queryLabels = query.value
     ? query.value.split(",").map((x) => x.trim())
     : [];
-  getImages(queryLabels);
+  updateImages(queryLabels);
 };
 
-getStatistics()
-  .then((data) => {
-    statistics.value = data;
-  })
-  .catch((err) => console.error(err));
+updateStatistics();
 </script>
 
 <template>

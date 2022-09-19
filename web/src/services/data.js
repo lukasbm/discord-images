@@ -11,16 +11,20 @@ import { ref } from "vue";
 import { firestore } from "./firebase";
 
 const images = ref(null);
+const statistics = ref(null);
 
 // get all statistics
-const getStatistics = async () => {
+const updateStatistics = () => {
   console.log("fetching statistics ...");
-  const snapshot = await getDoc(doc(firestore, "statistics", "labels"));
-  return snapshot.data();
+  getDoc(doc(firestore, "statistics", "labels"))
+    .then((snapshot) => {
+      statistics.value = snapshot.data();
+    })
+    .catch((err) => console.error(err));
 };
 
 // TODO filter by tags of authenticated user
-const getImages = (queryLabels) => {
+const updateImages = (queryLabels) => {
   console.log("fetching images...");
   let q = undefined;
   if (!queryLabels || queryLabels.length == 0) {
@@ -43,4 +47,4 @@ const getImages = (queryLabels) => {
     .catch((err) => console.error(err));
 };
 
-export { getStatistics, getImages, images };
+export { updateStatistics, updateImages, images, statistics };
