@@ -35,7 +35,8 @@ const discordCodeExchange = async (authCode, redirectUri) => {
       console.error(
         "discordCodeExchange - request error:",
         response.status,
-        response.statusText
+        response.statusText,
+        response.body
       );
       return undefined;
     } else {
@@ -59,7 +60,8 @@ const discordApiCall = async (resource, discordAuthToken) => {
       console.error(
         "discordApiCall - request error:",
         response.status,
-        response.statusText
+        response.statusText,
+        response.body
       );
       return undefined;
     } else {
@@ -125,7 +127,7 @@ export const discordAuth = functions.https.onCall(async (data, context) => {
   if (jwtToken) {
     return jwtToken;
   } else {
-    throw new functions.https.HttpsError("permission-denied", "TODO");
+    throw new functions.https.HttpsError("internal", "could not create jwt");
   }
 });
 

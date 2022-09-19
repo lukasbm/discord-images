@@ -21,6 +21,7 @@ const firebaseSignOut = () => {
     .catch((err) => console.error(err));
 };
 
+// TODO error handling
 const firebaseCreateToken = async (authCode) => {
   console.log("calling firebase cloud function");
   const discordAuth = httpsCallable(functions, "discordAuth");
