@@ -3,15 +3,37 @@ import { httpsCallable } from "firebase/functions";
 import { auth, functions } from "./firebase";
 import { ref } from "vue";
 
+const AuthenticationStatus = {
+  unauthenticated: 0,
+  authenticated: 1,
+  authenticating: 2,
+};
+
+const authStatus = ref(AuthenticationStatus.unauthenticated);
+
+const activeFirebaseUser = ref(null);
+
+const userData = ref(null);
+
+const cleanUp = () => {
+  authStatus.value = AuthenticationStatus.unauthenticated;
+  activeFirebaseUser.value = null;
+  userData.value = null;
+  localStorage.removeItem("firebaseJwt");
+  sessionStorage.removeItem("lastDiscordAuthState");
+};
+
 const firebaseSignIn = (jwt) => {
   console.log("firebase signing in with jwt:", jwt);
+  authStatus.value = AuthenticationStatus.authenticating;
   signInWithCustomToken(auth, jwt)
-    .then(() => {
-      console.log("firebase user");
+    .then((userCredential) => {
+      activeFirebaseUser.value = userCredential.user;
       authStatus.value = AuthenticationStatus.authenticated;
     })
     .catch((err) => {
       console.error(err);
+      cleanUp();
     });
 };
 
@@ -20,22 +42,36 @@ const firebaseSignOut = () => {
   signOut(auth)
     .then(() => {
       console.log("sign out successful");
-      authStatus.value = AuthenticationStatus.unauthenticated;
     })
-    .catch((err) => console.error(err));
+    .catch((err) => console.error(err))
+    .finally(() => {
+      cleanUp();
+    });
 };
 
-// TODO error handling
 const firebaseCreateToken = async (authCode) => {
   console.log("calling firebase cloud function");
-  const discordAuth = httpsCallable(functions, "discordAuth");
-  const result = await discordAuth({
-    authCode: authCode,
-    redirectUri: window.location.origin,
-  });
-  console.log("the firebase jtw token is", result.data);
-  localStorage.setItem("firebaseJwt", result.data);
-  return result.data;
+  authStatus.value = AuthenticationStatus.authenticating;
+  try {
+    const discordAuth = httpsCallable(functions, "discordAuth");
+    const result = await discordAuth({
+      authCode: authCode,
+      redirectUri: window.location.origin,
+    });
+    const jwt = result.data;
+    console.log("the firebase jtw token is", jwt);
+    localStorage.setItem("firebaseJwt", jwt);
+
+    const payload = parseJwt(jwt);
+    userData.value = {
+      uid: payload["uid"],
+      guilds: payload["claims"]["guilds"],
+    };
+    return jwt;
+  } catch (err) {
+    cleanUp();
+    return null;
+  }
 };
 
 const buildDiscordRedirect = () => {
@@ -57,18 +93,6 @@ const buildDiscordRedirect = () => {
   );
 };
 
-const AuthenticationStatus = {
-  unauthenticated: 0,
-  authenticated: 1,
-  authenticating: 2,
-};
-
-const authStatus = ref(AuthenticationStatus.unauthenticated);
-
-const activeFirebaseUser = ref(null);
-
-const userData = ref(null);
-
 const parseJwt = (token) => {
   var base64Url = token.split(".")[1];
   var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
@@ -86,46 +110,66 @@ const parseJwt = (token) => {
 
 function startup() {
   // check jwt
-  const jwt = localStorage.getItem("firebaseJwt");
-  let jwtOk = true;
-  if (jwt != null) {
+  const checkJwt = () => {
+    console.log("checking for stored firebase jwt token");
+
+    const jwt = localStorage.getItem("firebaseJwt");
+    if (!jwt) return false;
+
     const payload = parseJwt(jwt);
-    if (!("exp" in payload) || Date.now() > payload["exp"]) jwtOk = false;
+    if (!payload) return false;
+
+    console.log("jwt in local storage:", payload);
+
+    if (
+      !("exp" in payload) ||
+      Date.now() > new Date(new Number(payload["exp"]) * 1000).getTime()
+    )
+      return false;
+
     const uid = payload["uid"] ?? undefined;
     const guilds = payload["claims"]["guilds"] ?? undefined;
-    if (!guilds || !uid) jwtOk = false;
-    else
-      userData.value = {
-        uid: uid,
-        guilds: guilds,
-      };
-  } else {
-    jwtOk = false;
-  }
+    if (!guilds || !uid) return false;
 
-  if (!jwtOk) {
-    localStorage.removeItem("firebaseJwt");
+    console.log("stored firebase jwt token ok, signing in");
+    userData.value = {
+      uid: uid,
+      guilds: guilds,
+    };
+    firebaseSignIn(jwt);
+    return true;
+  };
+
+  const checkAuthParams = () => {
+    console.log("checking for parameters in url");
 
     let authParams = new URLSearchParams(window.location.search);
-    if (authParams.has("code") && authParams.has("state")) {
-      console.log("params present, starting login process");
-      if (
-        sessionStorage.getItem("lastDiscordAuthState") !=
-        authParams.get("state")
-      ) {
-        console.log("states dont match");
-        firebaseSignOut();
-      } else {
-        console.log("states match");
-        firebaseCreateToken(authParams.get("code"))
-          .then((result) => {
-            firebaseSignIn(result);
-          })
-          .catch((err) => console.error(err));
-      }
-    } else {
+    if (!authParams.has("code") || !authParams.has("state")) {
       console.log("params not present");
+      return false;
     }
+
+    console.log("params present");
+    if (
+      sessionStorage.getItem("lastDiscordAuthState") != authParams.get("state")
+    ) {
+      console.log("states dont match");
+      firebaseSignOut();
+      return false;
+    } else {
+      console.log("states match");
+      firebaseCreateToken(authParams.get("code"))
+        .then((jwt) => {
+          firebaseSignIn(jwt);
+        })
+        .catch((err) => console.error(err));
+    }
+  };
+
+  if (!checkJwt()) {
+    console.log("jwt in localStorage broken");
+    // localStorage.removeItem("firebaseJwt");
+    // checkAuthParams();
   }
 }
 

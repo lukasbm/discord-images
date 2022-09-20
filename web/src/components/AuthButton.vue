@@ -8,7 +8,7 @@ import {
 
 const login = () => {
   const discordRedirect = buildDiscordRedirect();
-  window.location.href = discordRedirect.url;
+  window.location.href = discordRedirect;
 };
 </script>
 
@@ -24,7 +24,9 @@ const login = () => {
     v-else-if="authStatus == AuthenticationStatus.authenticating"
     disabled
     class="btn btn-outline-light me-2"
-  ></button>
+  >
+    Sign In
+  </button>
   <button v-else @click="firebaseSignOut()" class="btn btn-outline-secondary">
     Sign Out
   </button>

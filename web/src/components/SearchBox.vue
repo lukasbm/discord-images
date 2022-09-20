@@ -30,6 +30,7 @@ const search = () => {
 };
 
 updateStatistics();
+updateImages();
 </script>
 
 <template>

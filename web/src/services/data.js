@@ -9,6 +9,7 @@ import {
 } from "firebase/firestore";
 import { ref } from "vue";
 import { firestore } from "./firebase";
+import { userData } from "./auth";
 
 const images = ref(null);
 const statistics = ref(null);
@@ -19,13 +20,13 @@ const updateStatistics = () => {
   getDoc(doc(firestore, "statistics", "labels"))
     .then((snapshot) => {
       statistics.value = snapshot.data();
+      console.log("updateStatistics value:", statistics.value);
     })
     .catch((err) => console.error(err));
 };
 
-// TODO filter by tags of authenticated user
 const updateImages = (queryLabels) => {
-  console.log("fetching images...");
+  console.log("fetching images with user:", userData.value.guilds);
   let q = undefined;
   if (!queryLabels || queryLabels.length == 0) {
     q = query(collection(firestore, "pictures"), orderBy("time", "desc"));
@@ -33,6 +34,7 @@ const updateImages = (queryLabels) => {
     q = query(
       collection(firestore, "pictures"),
       where("labels", "array-contains-any", queryLabels),
+      where("guild", "in", userData.value.guilds ?? []),
       orderBy("time", "desc")
     );
   }
@@ -43,6 +45,7 @@ const updateImages = (queryLabels) => {
         docs.push(doc.data());
       });
       images.value = docs;
+      console.log("udpateImages result:", docs);
     })
     .catch((err) => console.error(err));
 };
