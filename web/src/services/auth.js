@@ -23,18 +23,19 @@ const cleanUp = () => {
   sessionStorage.removeItem("lastDiscordAuthState");
 };
 
-const firebaseSignIn = (jwt) => {
+const firebaseSignIn = async (jwt) => {
   console.log("firebase signing in with jwt:", jwt);
   authStatus.value = AuthenticationStatus.authenticating;
-  signInWithCustomToken(auth, jwt)
-    .then((userCredential) => {
-      activeFirebaseUser.value = userCredential.user;
-      authStatus.value = AuthenticationStatus.authenticated;
-    })
-    .catch((err) => {
-      console.error(err);
-      cleanUp();
-    });
+  try {
+    const userCredential = await signInWithCustomToken(auth, jwt);
+    activeFirebaseUser.value = userCredential.user;
+    authStatus.value = AuthenticationStatus.authenticated;
+    return true;
+  } catch (err) {
+    console.error(err);
+    cleanUp();
+    return false;
+  }
 };
 
 const firebaseSignOut = () => {
@@ -108,9 +109,9 @@ const parseJwt = (token) => {
   return JSON.parse(jsonPayload);
 };
 
-function startup() {
+async function startup() {
   // check jwt
-  const checkJwt = () => {
+  const checkJwt = async () => {
     console.log("checking for stored firebase jwt token");
 
     const jwt = localStorage.getItem("firebaseJwt");
@@ -136,8 +137,7 @@ function startup() {
       uid: uid,
       guilds: guilds,
     };
-    firebaseSignIn(jwt);
-    return true;
+    return await firebaseSignIn(jwt);
   };
 
   const checkAuthParams = () => {
@@ -166,10 +166,12 @@ function startup() {
     }
   };
 
-  if (!checkJwt()) {
+  const jwtOk = await checkJwt();
+
+  if (!jwtOk) {
     console.log("jwt in localStorage broken");
-    // localStorage.removeItem("firebaseJwt");
-    // checkAuthParams();
+    localStorage.removeItem("firebaseJwt");
+    checkAuthParams();
   }
 }
 
