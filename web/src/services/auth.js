@@ -131,7 +131,7 @@ function startup() {
     const guilds = payload["claims"]["guilds"] ?? undefined;
     if (!guilds || !uid) return false;
 
-    console.log("stored firebase jwt token ok, signing in");
+    console.log("attempting sign in with stored jwt");
     userData.value = {
       uid: uid,
       guilds: guilds,

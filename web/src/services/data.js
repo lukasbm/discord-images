@@ -26,26 +26,38 @@ const updateStatistics = () => {
 };
 
 const updateImages = (queryLabels) => {
-  console.log("fetching images with user:", userData.value.guilds);
-  let q = undefined;
-  if (!queryLabels || queryLabels.length == 0) {
-    q = query(collection(firestore, "pictures"), orderBy("time", "desc"));
-  } else {
-    q = query(
+  let guilds = [];
+  if (userData.value.guilds)
+    userData.value.guilds.forEach((x) => guilds.push(x));
+  console.log("fetching images with labels:", queryLabels);
+
+  getDocs(
+    query(
       collection(firestore, "pictures"),
-      where("labels", "array-contains-any", queryLabels),
-      where("guild", "in", userData.value.guilds ?? []),
+      where("guildId", "in", guilds),
       orderBy("time", "desc")
-    );
-  }
-  getDocs(q)
+    )
+  )
     .then((snapshot) => {
       let docs = [];
       snapshot.forEach((doc) => {
-        docs.push(doc.data());
+        const data = doc.data();
+        let ok = true;
+        if (queryLabels && queryLabels.length > 0) {
+          for (let x of queryLabels) {
+            if (!data.labels.includes(x)) {
+              ok = false;
+              break;
+            }
+          }
+        }
+
+        if (ok) {
+          docs.push(data);
+        }
       });
       images.value = docs;
-      console.log("udpateImages result:", docs);
+      console.log("udpateImages value:", docs);
     })
     .catch((err) => console.error(err));
 };
