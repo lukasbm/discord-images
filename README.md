@@ -25,6 +25,7 @@ for the bot:
 
 - `DISCORD_BOT_TOKEN`: the gateway token for the bot
 - `FIREBASE_API_TOKEN`: the api token for google firebase
+- `CLARIFAI_API_KEY`: the api key for clarifai
 - `./serviceAccount.json`: is the file that countains the private key for the admin sdk, it should be located in the bot directory.
 
 for cloud functions:
