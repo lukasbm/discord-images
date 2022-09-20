@@ -33,11 +33,11 @@ for cloud functions:
 - `DISCORD_CLIENT_ID`: discord oauth client id, in `./functions/.env`
 - `DISCORD_CLIENT_SECRET`: discord oauth client secret, in `./functions/.env`
 
-for the frontend:
+<!-- for the frontend:
 
 - `vite.DISCORD_CLIENT_ID`: TODO
 - `vite.FIREBASE_API_KEY`: TODO
 - `vite.FIREBASE_PROJECT_ID`: TODO
-- etc. firebase config
+- etc. firebase config -->
 
 Note that the `serviceAccount.json` file is the same for the functions and the bot. Due to a bug in firebase the file has to there twice.

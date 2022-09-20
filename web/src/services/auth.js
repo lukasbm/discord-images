@@ -76,7 +76,7 @@ const firebaseCreateToken = async (authCode) => {
 };
 
 const buildDiscordRedirect = () => {
-  const clientId = "1011648062915096627"; // TODO replace with vite env variable
+  const clientId = "1011648062915096627";
   const redirectUri = window.location.origin;
   const redirectState = Math.random()
     .toString(36)

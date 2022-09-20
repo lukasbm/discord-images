@@ -3,9 +3,15 @@ service cloud.firestore {
   match /databases/{database}/documents {
     match /{document=**} {
       allow write: if false;
+      allow read: if false;
       
       match /pictures/{pic} {
-      	allow read: if request.auth != null && resource.data.guildId in request.auth.claims.guilds;
+      	//allow read: if request.auth != null && resource.data.guildId in request.auth.claims.guilds;
+      	allow read: if request.auth != null;
+      }
+      
+      match /statistics/{stat} {
+      	allow read: if request.auth != null;
       }
     }
   }
