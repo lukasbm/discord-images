@@ -20,7 +20,6 @@
   },
   "homepage": "https://github.com/lukasbm/discord-images#readme",
   "workspaces": [
-    "analyze",
     "bot",
     "web",
     "functions"

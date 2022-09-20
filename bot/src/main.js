@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { Client, IntentsBitField } from "discord.js";
-import { analyzeImage } from "analyze/src/clarifai.js";
+import { analyzeImage } from "./clarifai.js";
 import { firestore } from "./firebase.js";
 import { FieldValue } from "firebase-admin/firestore";
 

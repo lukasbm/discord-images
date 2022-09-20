@@ -8,6 +8,7 @@
   "dependencies": {
     "discord.js": "^14.2.0",
     "firebase-admin": "^11.0.1",
-    "reflect-metadata": "^0.1.13"
+    "reflect-metadata": "^0.1.13",
+    "clarifai-nodejs-grpc": "^8.0.0"
   }
 }

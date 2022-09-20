@@ -1,8 +1,0 @@
-{
-  "name": "analyze",
-  "private": true,
-  "type": "module",
-  "dependencies": {
-    "clarifai-nodejs-grpc": "^8.0.0"
-  }
-}
